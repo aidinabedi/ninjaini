@@ -21,60 +21,54 @@ restrictions:
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef NINJA_CONTAINER_H
-#define NINJA_CONTAINER_H
+#ifndef NINJA_MAIN_H
+#define NINJA_MAIN_H
 
-#include "NinjaKey.h"
-#include "NinjaArray.h"
-
-#include <map>
+#include "NinjaContainer.h"
 
 namespace Ninja { // tolua_export
 
 
 //-----------------------------------------------------------------------------
 
-	class Container : // tolua_export
-		public Ninja::AssociativeArray<Ninja::Key> // tolua_export
+	class Main : // tolua_export
+		public Ninja::Container // tolua_export
 	{ // tolua_export
 	protected:
 
 		void parseArgument(const char* s);
 
-		const char* parseParam(const char* s);
-
 	public: // tolua_export
 
-		typedef std::map<std::string, std::string> map_type;
-		typedef std::pair<std::string, std::string> pair_type;
+		Main(void) {} // tolua_export
+		Main(int argc, char *argv[]) { parse(argc, argv); }
+		~Main() {} // tolua_export
 
-		Container(void) {} // tolua_export
-		Container(Key& k) { parse(k.toString()); } // tolua_export
-		Container(const Value& v) { parse(v.toString()); } // tolua_export
-		Container(const char *a_sValue) { parse(a_sValue); } // tolua_export
-		~Container() {} // tolua_export
-
-		void parse(const char* a_sData); // tolua_export
-
-		Key& key(const char* a) { return operator [](a); } // tolua_export
-		Key& key(const std::string& a) { return operator [](a); }
-		Key& key(int index) { return operator [](index); } // tolua_export
+		void parse(int argc, char *argv[]);
 
 		map_type map(void);
 
-		std::string str(void) const { std::stringstream ss; ss << *this; return ss.str(); } // tolua_export
+		// tolua_begin
+		std::string str(void) const {
+			std::string s;
 
-		Container& operator =(const Value &a) { parse(a); return *this; }
+			for (int i = 0; i < size(); ++i)
+				s += operator [](i).strAsCmdLine();
+
+			return s;
+		}
+		// tolua_end
+
 		operator Value*() { return new Value(str()); } // tolua_export
 
-		friend std::ostream& operator << (std::ostream &os, const Container &a) {
+		friend std::ostream& operator << (std::ostream &os, const Main &a) {
 			if (a.isEmpty()) return os;
-			os << "(" << a.first().strAsParameter().c_str();
+			os << a.first().strAsCmdLine().c_str();
 
 			for (int i = 1; i < a.size(); ++i)
-				os << ", " << a[i].strAsParameter().c_str();
+				os << " " << a[i].strAsCmdLine().c_str();
 
-			return os << ")";
+			return os;
 		}
 	}; // tolua_export
 

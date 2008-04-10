@@ -158,6 +158,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NinjaMain.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NinjaValue.cpp"
 				>
 			</File>
@@ -185,6 +189,10 @@
 			</File>
 			<File
 				RelativePath="..\include\NinjaKey.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\NinjaMain.h"
 				>
 			</File>
 			<File

@@ -21,61 +21,33 @@ restrictions:
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "NinjaContainer.h"
+#include "NinjaMain.h"
 
 namespace Ninja {
 
 
 //-----------------------------------------------------------------------------
 
-	Container::map_type Container::map(void) {
-		map_type mapPairArray;
-
-		for (int i = 0; i < size(); ++i)
-			mapPairArray.insert(pair_type(operator [](i).getName(), operator [](i).toString()));
-
-		return mapPairArray;
+	void Main::parse(int argc, char *argv[]) {
+		for (int i = 0; i < argc; i++)
+			parseArgument(argv[i]);
 	}
 
 
 //-----------------------------------------------------------------------------------
 
-	const char* Container::parseParam(const char* s) {
-		const char* e = strpbrk(s, "=,)");
-		if (!e) return NULL;
+	void Main::parseArgument(const char* s) {
+		if (*(s++) != '-') return;
+		const char* e = strchr(s, '=');
 
-		if (*e == '=') {
-			std::string name(s, TrimRight(s, e));
+		if (!e) {
+			key(s).add(new Value("true"));
 
-			s = e + 1;
-			e = strpbrk(s, ",)");
-			if (!e) e = s + strlen(s);
+		} else if (*e == '=') {
+			std::string name(s, e);
 
-			std::string value(TrimLeft(s, e), TrimRight(s, e));
-			key(name).add(new Value(value));
-
-			if (!*e) return NULL;
-		}
-
-		return e + 1;
-	}
-
-
-//-----------------------------------------------------------------------------------
-
-	void Container::parse(const char* a_sData) {
-		const char *s = a_sData;
-
-		s = strchr(s, '(');
-		if (!s) return;
-		else s++;
-
-		while (*s != '\0') {
-			while (*s == ' ') s++;
-
-			s = parseParam(s);
-			if (!s) return;
+			key(name).add(new Value(e + 1));
 		}
 	}
 
-}
+} // namespace Ninja

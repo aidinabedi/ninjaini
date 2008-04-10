@@ -152,4 +152,4 @@ namespace Ninja {
 		return true;
 	}
 
-}
+} // namespace Ninja
